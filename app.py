@@ -47,7 +47,7 @@ class Mechanics(Base):
     salary: Mapped[str] = mapped_column(String(360), nullable=False)
     address: Mapped[str] = mapped_column(String(500), nullable=True)
 
-    ticket_mechanics: Mapped[list['Ticket_mechanics']] = relationship('Ticket_mechanics', back_populates='mechanic')
+    # ticket_mechanics: Mapped[list['Ticket_mechanics']] = relationship('Ticket_mechanics', back_populates='mechanic')
     service_tickets: Mapped[list['Service_tickets']] = relationship('Service_tickets', secondary='ticket_mechanics', back_populates='mechanics')
 
 class Service_tickets(Base):
@@ -61,7 +61,7 @@ class Service_tickets(Base):
     service_date: Mapped[date] = mapped_column(Date, nullable=False)
 
     customer: Mapped['Customers'] = relationship('Customers', back_populates='service_tickets')
-    ticket_mechanics: Mapped[list['Ticket_mechanics']] = relationship('Ticket_mechanics', back_populates='service_ticket')
+    # ticket_mechanics: Mapped[list['Ticket_mechanics']] = relationship('Ticket_mechanics', back_populates='service_ticket')
     mechanics: Mapped[list['Mechanics']] = relationship('Mechanics', secondary='ticket_mechanics', back_populates='service_tickets')
     
 
