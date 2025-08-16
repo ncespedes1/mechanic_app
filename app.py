@@ -1,8 +1,8 @@
 from datetime import date
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, Table, Column
-from sqlalchemy import Date, String, Integer, Float, ForeignKey
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import Date, String, Integer, Float, ForeignKey, Table, Column
 
 app = Flask(__name__)
 
@@ -16,12 +16,12 @@ db.init_app(app)
 
 
 
-# service_mechanics = Table(
-#     'service_mechanics',
-#     Base.metadata,
-#     Column('ticket_id', Integer, ForeignKey('service_tickets.id')),
-#     Column('mechanic_id', Integer, ForeignKey('mechanics.id'))
-# )
+ticket_mechanics = Table(
+    'ticket_mechanics',
+    Base.metadata,
+    Column('ticket_id', Integer, ForeignKey('service_tickets.id')),
+    Column('mechanic_id', Integer, ForeignKey('mechanics.id'))
+)
 
 class Customers(Base):
     __tablename__ = 'customers'
@@ -47,8 +47,8 @@ class Mechanics(Base):
     salary: Mapped[str] = mapped_column(String(360), nullable=False)
     address: Mapped[str] = mapped_column(String(500), nullable=True)
 
-    ticket_mechanics: Mapped[list['Ticket_mechanics']] = mapped_column('Ticket_mechanics', back_populates='mechanic')
-    service_tickets: Mapped[list['Service_tickets']] = mapped_column('Service_tickets', secondary='ticket_mechanics', back_populates='mechanics')
+    ticket_mechanics: Mapped[list['Ticket_mechanics']] = relationship('Ticket_mechanics', back_populates='mechanic')
+    service_tickets: Mapped[list['Service_tickets']] = relationship('Service_tickets', secondary='ticket_mechanics', back_populates='mechanics')
 
 class Service_tickets(Base):
     __tablename__ = 'service_tickets'
@@ -65,14 +65,14 @@ class Service_tickets(Base):
     mechanics: Mapped[list['Mechanics']] = relationship('Mechanics', secondary='ticket_mechanics', back_populates='service_tickets')
     
 
-class Ticket_mechanics(Base):
-    __tablename__ = 'ticket_mechanics'
+# class Ticket_mechanics(Base):
+#     __tablename__ = 'ticket_mechanics'
 
-    ticket_id: Mapped[int] = mapped_column(Integer, ForeignKey('customers.id'), nullable=False)
-    mechanic_id: Mapped[int] = mapped_column(Integer, ForeignKey('customers.id'), nullable=False)
+#     ticket_id: Mapped[int] = mapped_column(Integer, ForeignKey('customers.id'), nullable=False)
+#     mechanic_id: Mapped[int] = mapped_column(Integer, ForeignKey('customers.id'), nullable=False)
 
-    service_ticket: Mapped['Service_tickets'] = mapped_column('Service_tickets', back_populates='ticket_mechanics')
-    mechanic: Mapped['Mechanics'] = mapped_column('Mechanics', back_populates='ticket_mechanics')
+#     service_ticket: Mapped['Service_tickets'] = relationship('Service_tickets', back_populates='ticket_mechanics')
+#     mechanic: Mapped['Mechanics'] = relationship('Mechanics', back_populates='ticket_mechanics')
 
 
 with app.app_context():
